@@ -26,7 +26,7 @@ async fn main() {
         }
     };
 
-    if matches.contains_id("generate") {
+    if matches.get_flag("generate") {
         let prompt = "This GPT is designed to assist with automatically creating commit messages for Git commits based on the provided changes. It follows specific formatting guidelines for the subject and body of the commit message, including separating the subject from the body with a blank line, limiting the subject line to 50 characters, capitalizing the subject line, avoiding ending the subject line with a period, using the imperative mood in the subject line, and wrapping the body at 72 characters. The body of the commit message should explain what and why the changes were made, rather than how they were implemented. Please based on below changes, provide a commit message: ";
         let commit = git::ops::Commit::new();
         let current_dir = match env::current_dir() {
