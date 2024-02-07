@@ -3,7 +3,7 @@ use clap::{Arg, Command};
 pub fn build_cli_app() -> Command {
     Command::new("git-gen")
         .version("0.1.0")
-        .author("Your Name <youremail@example.com>")
+        .author("XY01 xyzmhx@gmail.com")
         .about("Generates Git commit messages using GPT")
         .arg(
             Arg::new("generate")
