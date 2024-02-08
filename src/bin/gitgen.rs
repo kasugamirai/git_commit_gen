@@ -44,7 +44,17 @@ async fn main() {
                 return;
             }
         };
-        let message = format!("{}\n{}", git_changes, prompt);
+
+        let git_diff = match commit.get_git_diff(repo_path) {
+            Ok(diff) => diff,
+            Err(e) => {
+                log::error!("Failed to get git diff: {}", e);
+                return;
+            }
+        };
+        log::info!("Changes: {}", git_changes);
+        log::info!("Diff: {}", git_diff);
+        let message = format!("{}\n{}\n{}", git_changes, git_diff, prompt);
         let response = gpt_client.send_message_streaming(&message).await.unwrap();
         print!("\nDo you want to commit? (yes/no): ");
         io::stdout().flush().unwrap();

@@ -1,4 +1,4 @@
-use git2::{Error, Repository, StatusOptions};
+use git2::{DiffFormat, DiffOptions, Error, Repository, StatusOptions};
 use std::path::Path;
 
 pub struct Commit {}
@@ -29,6 +29,24 @@ impl Commit {
         }
 
         Ok(changes)
+    }
+
+    pub fn get_git_diff(&self, repo_path: &Path) -> Result<String, git2::Error> {
+        let repo = Repository::open(repo_path)?;
+        let head = repo.head()?;
+        let tree = head.peel_to_tree()?;
+
+        let mut opts = DiffOptions::new();
+        let diff = repo.diff_tree_to_workdir_with_index(Some(&tree), Some(&mut opts))?;
+
+        let mut diff_string = String::new();
+        diff.print(DiffFormat::Patch, |_, _, line| {
+            let content = std::str::from_utf8(line.content()).unwrap_or_default();
+            diff_string.push_str(content);
+            true
+        })?;
+
+        Ok(diff_string)
     }
 
     pub fn git_commit(&self, msg: &str) -> Result<(), Error> {
