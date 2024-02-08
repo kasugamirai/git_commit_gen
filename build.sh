@@ -1,4 +1,4 @@
 mkdir output
-cargo build --bin bootstrap --release
-cp target/release/bootstrap output
+cargo build --bin gitgen --release
+cp target/release/gitgen output
 chmod +x output/*
