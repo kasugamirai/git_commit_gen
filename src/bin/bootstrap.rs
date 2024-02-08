@@ -1,19 +1,19 @@
 use dotenv::dotenv;
 use std::env;
 use std::io::{self, Write};
-
 use auto_git_commit::cli;
 use auto_git_commit::git;
 use auto_git_commit::gpt;
 
 #[tokio::main]
 async fn main() {
+    env_logger::init();
     dotenv().ok();
     let matches = cli::commands::build_cli_app().get_matches();
     let api_key = match env::var("OPENAI_API_KEY") {
         Ok(key) => key,
         Err(_) => {
-            eprintln!("Please set the OPENAI_API_KEY environment variable");
+            log::error!("Please set the OPENAI_API_KEY environment variable");
             return;
         }
     };
@@ -21,7 +21,7 @@ async fn main() {
     let gpt_client = match gpt::msg::GPTClient::new(api_key).await {
         Ok(client) => client,
         Err(e) => {
-            eprintln!("Failed to create GPT client: {}", e);
+            log::error!("Failed to create GPT client: {}", e);
             return;
         }
     };
@@ -32,7 +32,7 @@ async fn main() {
         let current_dir = match env::current_dir() {
             Ok(dir) => dir,
             Err(e) => {
-                eprintln!("Failed to get current directory: {}", e);
+                log::error!("Failed to get current directory: {}", e);
                 return;
             }
         };
@@ -40,7 +40,7 @@ async fn main() {
         let git_changes = match commit.read_changes(repo_path) {
             Ok(changes) => changes,
             Err(e) => {
-                eprintln!("Failed to read changes: {}", e);
+                log::error!("Failed to read changes: {}", e);
                 return;
             }
         };
