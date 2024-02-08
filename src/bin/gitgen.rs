@@ -46,7 +46,7 @@ async fn main() {
         };
         let message = format!("{}\n{}", git_changes, prompt);
         let response = gpt_client.send_message_streaming(&message).await.unwrap();
-        print!("\nDo you want to push? (yes/no): ");
+        print!("\nDo you want to commit? (yes/no): ");
         io::stdout().flush().unwrap();
         let mut answer = String::new();
         io::stdin().read_line(&mut answer).unwrap();
