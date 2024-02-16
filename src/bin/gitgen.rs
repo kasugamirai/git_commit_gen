@@ -27,7 +27,7 @@ async fn main() {
     };
 
     if matches.get_flag("generate") {
-        let prompt = "Creating commit messages for Git commits based on the provided changes. It follows specific formatting guidelines for the subject and body of the commit message, including separating the subject from the body with a blank line, limiting the subject line to 50 characters, capitalizing the subject line, avoiding ending the subject line with a period, using the imperative mood in the subject line, and wrapping the body at 72 characters. The body of the commit message should explain what and why the changes were made, rather than how they were implemented. Please based on above changes, provide a commit message: ";
+        let prompt = "Please provide a commit message based on the changes, ensuring to wrap the body at 72 characters. Use the body to detail what changes were made and why, rather than the method of implementation.";
         let commit = git::ops::Commit::new();
         let current_dir = match env::current_dir() {
             Ok(dir) => dir,
@@ -54,7 +54,7 @@ async fn main() {
         };
         log::info!("Changes: {}", git_changes);
         log::info!("Diff: {}", git_diff);
-        let message = format!("{}\n{}\n{}", git_changes, git_diff, prompt);
+        let message = format!("{}\n{}\n{}", prompt, git_changes, git_diff);
         let response = gpt_client.send_message_streaming(&message).await.unwrap();
         print!("\nDo you want to commit? (yes/no): ");
         io::stdout().flush().unwrap();

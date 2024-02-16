@@ -56,7 +56,10 @@ impl Commit {
         let oid = index.write_tree()?;
         let tree = repo.find_tree(oid)?;
         let parent_commit = match repo.head() {
-            Ok(reference) => Some(repo.find_commit(reference.target().unwrap())?),
+            Ok(reference) => match reference.target() {
+                Some(target) => Some(repo.find_commit(target)?),
+                None => None,
+            },
             Err(_) => None,
         };
         let parents = parent_commit.iter().collect::<Vec<_>>();
