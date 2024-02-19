@@ -7,8 +7,9 @@ use std::io::{self, Write};
 
 #[tokio::main]
 async fn main() {
-    env_logger::init();
-    dotenv().ok();
+    if Path::new(".env").exists() {
+        dotenv::dotenv().expect("Failed to load .env file");
+    }
     let matches = cli::commands::build_cli_app().get_matches();
     let api_key = match env::var("OPENAI_API_KEY") {
         Ok(key) => key,
