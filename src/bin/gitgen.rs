@@ -4,6 +4,7 @@ use auto_git_commit::gpt;
 use dotenv::dotenv;
 use std::env;
 use std::io::{self, Write};
+use std::path::Path;
 
 #[tokio::main]
 async fn main() {
