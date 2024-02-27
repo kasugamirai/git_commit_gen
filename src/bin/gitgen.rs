@@ -1,16 +1,18 @@
 use auto_git_commit::cli;
 use auto_git_commit::git;
 use auto_git_commit::gpt;
-use dotenv::dotenv;
+use auto_git_commit::gpt::msg::ChatClient;
 use std::env;
 use std::io::{self, Write};
 use std::path::Path;
 
 #[tokio::main]
 async fn main() {
+    // Load environment variables from .env file explicitly
     if Path::new(".env").exists() {
         dotenv::dotenv().expect("Failed to load .env file");
     }
+    // Parse command line arguments
     let matches = cli::commands::build_cli_app().get_matches();
     let api_key = match env::var("OPENAI_API_KEY") {
         Ok(key) => key,
@@ -19,7 +21,7 @@ async fn main() {
             return;
         }
     };
-
+    // Create a GPT client
     let gpt_client = match gpt::msg::GPTClient::new(api_key).await {
         Ok(client) => client,
         Err(e) => {
@@ -27,7 +29,7 @@ async fn main() {
             return;
         }
     };
-
+    // Generate a commit message
     if matches.get_flag("generate") {
         let prompt = "Please provide a commit message based on the changes, ensuring to wrap the body at 72 characters. Use the body to detail what changes were made and why, rather than the method of implementation.";
         let commit = git::ops::Commit::new();

@@ -1,5 +1,6 @@
 use clap::{Arg, Command};
 
+// build_cli_app is a function that returns a Command object
 pub fn build_cli_app() -> Command {
     Command::new("git-gen")
         .version("0.1.0")

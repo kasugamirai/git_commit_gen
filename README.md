@@ -11,7 +11,7 @@ This project is a tool that uses the OpenAI GPT model to automatically generate 
 
 ## Usage
 
-```
+```bash
 cp ~/projects/auto_git_commit/output/git_gen /usr/local/bin/
 ```
 

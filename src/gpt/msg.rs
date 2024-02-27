@@ -1,23 +1,49 @@
+use async_trait::async_trait;
 use chatgpt::prelude::*;
 use chatgpt::types::CompletionResponse;
 use futures::stream::StreamExt;
 use std::io::{stdout, Write};
+use std::result::Result;
 
 pub struct GPTClient {
     pub client: ChatGPT,
 }
 
-impl GPTClient {
-    pub async fn new(api_key: String) -> Result<Self> {
+#[async_trait]
+pub trait ChatClient {
+    async fn new(api_key: String) -> Result<Self, Box<dyn std::error::Error>>
+    where
+        Self: Sized;
+
+    async fn send_message(
+        &self,
+        message: &str,
+    ) -> Result<CompletionResponse, Box<dyn std::error::Error>>;
+
+    async fn send_message_streaming(
+        &self,
+        message: &str,
+    ) -> Result<String, Box<dyn std::error::Error>>;
+}
+
+#[async_trait]
+impl ChatClient for GPTClient {
+    async fn new(api_key: String) -> Result<Self, Box<dyn std::error::Error>> {
         let client = ChatGPT::new(api_key)?;
         Ok(Self { client })
     }
 
-    pub async fn send_message(&self, message: &str) -> Result<CompletionResponse> {
-        self.client.send_message(message).await
+    async fn send_message(
+        &self,
+        message: &str,
+    ) -> Result<CompletionResponse, Box<dyn std::error::Error>> {
+        Ok(self.client.send_message(message).await?)
     }
 
-    pub async fn send_message_streaming(&self, message: &str) -> Result<String> {
+    async fn send_message_streaming(
+        &self,
+        message: &str,
+    ) -> Result<String, Box<dyn std::error::Error>> {
         let mut stream = self.client.send_message_streaming(message).await?;
         let mut result = String::new();
 

@@ -4,10 +4,11 @@ use std::path::Path;
 pub struct Commit {}
 
 impl Commit {
+    // Create a new instance of the Commit struct
     pub fn new() -> Self {
         Self {}
     }
-
+    // Read the changes in the Git repository
     pub fn read_changes(&self, repo_path: &Path) -> Result<String, git2::Error> {
         let repo = Repository::open(repo_path)?;
         let mut options = StatusOptions::new();
@@ -30,7 +31,7 @@ impl Commit {
 
         Ok(changes)
     }
-
+    // Get the Git diff
     pub fn get_git_diff(&self, repo_path: &Path) -> Result<String, git2::Error> {
         let repo = Repository::open(repo_path)?;
         let head = repo.head()?;
@@ -48,7 +49,7 @@ impl Commit {
 
         Ok(diff_string)
     }
-
+    // Commit the changes to the Git repository
     pub fn git_commit(&self, msg: &str) -> Result<(), Error> {
         let repo = Repository::open(".")?;
         let sig = repo.signature()?;
