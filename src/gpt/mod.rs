@@ -48,16 +48,14 @@ impl ChatClient for GPTClient {
         let mut result = String::new();
 
         while let Some(chunk) = stream.next().await {
-            match chunk {
-                ResponseChunk::Content {
-                    delta,
-                    response_index: _,
-                } => {
-                    print!("{}", delta);
-                    stdout().lock().flush().unwrap();
-                    result.push_str(&delta);
-                }
-                _ => {}
+            if let ResponseChunk::Content {
+                delta,
+                response_index: _,
+            } = chunk
+            {
+                print!("{}", delta);
+                stdout().lock().flush().unwrap();
+                result.push_str(&delta);
             }
         }
 
